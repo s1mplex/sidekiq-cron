@@ -243,16 +243,44 @@ describe "Cron Job" do
         klass: 'CronTestClass',
         args:  { foo: 'bar' }
       }
-      @job = Sidekiq::Cron::Job.new(@args)
     end
 
     it 'should return valid payload for Sidekiq::Client' do
+      @job = Sidekiq::Cron::Job.new(@args)
       payload = {
-        "retry" => true,
         "queue" => "super_queue",
         "class" => "CronTestClass",
+        "retry" => true,
         "args"  => [{:foo=>"bar"}]
       }
+      assert_equal @job.sidekiq_worker_message, payload
+    end
+
+    it 'should return valid retry when retry is a Fixnum' do
+      @args[:klass] = 'CronTestClassWithRetry'
+      @job = Sidekiq::Cron::Job.new(@args)
+
+      payload = {
+        "queue" => "super_queue",
+        "class" => "CronTestClassWithRetry",
+        "retry" => 4,
+        "args" => [{:foo=>"bar"}]
+      }
+
+      assert_equal @job.sidekiq_worker_message, payload
+    end
+
+    it 'should use the supplied retry setting instead of the jobs default setting' do
+      @args[:retry] = 8
+      @job = Sidekiq::Cron::Job.new(@args)
+
+      payload = {
+        "queue" => "super_queue",
+        "class" => "CronTestClass",
+        "retry" => 8,
+        "args" => [{:foo=>"bar"}]
+      }
+
       assert_equal @job.sidekiq_worker_message, payload
     end
   end

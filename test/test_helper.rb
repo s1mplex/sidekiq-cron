@@ -53,6 +53,16 @@ class CronTestClass
   end
 end
 
+class CronTestClassWithRetry
+  include Sidekiq::Worker
+
+  sidekiq_options :retry => 4
+
+  def perform args = {}
+    puts "super croned job #{args}"
+  end
+end
+
 class CronTestClassWithQueue
   include Sidekiq::Worker
   sidekiq_options :queue => :super, :retry => false, :backtrace => true

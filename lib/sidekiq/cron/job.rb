@@ -259,8 +259,10 @@ module Sidekiq
         elsif @klass
           message_data = {
             "class" => @klass.to_s,
-            "args"  => @args,
+            "args"  => @args
           }
+
+          message_data["retry"] = args["retry"] if args.key?("retry")
 
           #get right data for message
           #only if message wasn't specified before
