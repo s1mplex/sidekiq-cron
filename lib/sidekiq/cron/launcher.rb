@@ -29,7 +29,10 @@ module Sidekiq
     # execute normal run of launcher and run cron poller
     def run
       old_run
-      cron_poller.start
+      poller_thread = cron_poller.start
+      poller_thread.priority = 15
+
+      poller_thread
     end
 
     # remember old quiet

@@ -7,6 +7,8 @@ module Sidekiq
   module Cron
     # The Poller checks Redis every N seconds for sheduled cron jobs
     class Poller < Sidekiq::Scheduled::Poller
+      INITIAL_WAIT = 5
+
       def enqueue
         Sidekiq::Cron::Job.all.each do |job|
           enqueue_job(job)
