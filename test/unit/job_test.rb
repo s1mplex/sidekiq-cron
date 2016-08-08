@@ -241,6 +241,7 @@ describe "Cron Job" do
         cron:  '* * * * *',
         queue: 'super_queue',
         klass: 'CronTestClass',
+        retry: false,
         args:  { foo: 'bar' }
       }
     end
@@ -250,7 +251,7 @@ describe "Cron Job" do
       payload = {
         "queue" => "super_queue",
         "class" => "CronTestClass",
-        "retry" => true,
+        "retry" => false,
         "args"  => [{:foo=>"bar"}]
       }
       assert_equal @job.sidekiq_worker_message, payload
@@ -258,6 +259,7 @@ describe "Cron Job" do
 
     it 'should return valid retry when retry is a Fixnum' do
       @args[:klass] = 'CronTestClassWithRetry'
+      @args[:retry] = 4
       @job = Sidekiq::Cron::Job.new(@args)
 
       payload = {
