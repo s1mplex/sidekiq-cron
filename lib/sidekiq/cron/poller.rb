@@ -29,6 +29,10 @@ module Sidekiq
         logger.error "CRON JOB: #{ex.message}"
         logger.error "CRON JOB: #{ex.backtrace.first}"
       end
+
+      def random_poll_interval
+        5 * rand + 2
+      end
     end
   end
 end
